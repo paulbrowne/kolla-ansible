@@ -1,0 +1,15 @@
+---
+- name: Running MariaDB xtrabackup container
+  kolla_docker:
+    action: "start_container"
+    common_options: "{{ docker_common_options }}"
+    detach: False
+    image: "{{ xtrabackup_image_full }}"
+    name: "xtrabackup"
+    restart_policy: "never"
+    volumes:
+      - "{{ node_config_directory }}xtrabackup:/etc/mysql:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+      - "backup:/backup"
+    volumes_from:
+      - "mariadb"

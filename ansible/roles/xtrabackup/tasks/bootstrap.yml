@@ -1,5 +1,5 @@
 ---
-- name: Creating XtraBackup database user and setting permissions
+- name: Creating xtrabackup database user and setting permissions
   kolla_toolbox:
     module_name: mysql_user
     module_args:
@@ -13,3 +13,6 @@
       priv: "*.*:SELECT,RELOAD,LOCK TABLES,SHOW VIEW,REPLICATION CLIENT"
       append_privs: "yes"
   run_once: True
+
+- include: backup.yml
+  when: mariadb_backup | default(False)

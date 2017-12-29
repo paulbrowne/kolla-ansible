@@ -1,1 +1,16 @@
 ---
+- name: Ensuring config directories exist
+  file:
+    path: "{{ node_config_directory }}/{{ item }}"
+    state: "directory"
+    recurse: yes
+  with_items: 
+    - "xtrabackup"
+
+- name: Copying over my.cnf for xtrabackup
+  become: true
+  template:
+    src: "my.cnf.j2"
+    dest: "{{ node_config_directory }}xtrabackup/my.cnf"
+    mode: "0770"
+  register: xtrabackup_config_cnf
