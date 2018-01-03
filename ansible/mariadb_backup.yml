@@ -8,7 +8,6 @@
       register: kolla_ansible_version
       changed_when: false
       when: openstack_release == "auto"
-
     - name: Set openstack_release variable
       set_fact:
         openstack_release: "{{ kolla_ansible_version.stdout }}"

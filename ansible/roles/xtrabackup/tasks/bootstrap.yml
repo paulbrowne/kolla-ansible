@@ -15,4 +15,6 @@
   run_once: True
 
 - include: backup.yml
-  when: mariadb_backup | default(False)
+  when:
+    - mariadb_backup | default(False)
+    - inventory_hostname == groups['mariadb'][0]

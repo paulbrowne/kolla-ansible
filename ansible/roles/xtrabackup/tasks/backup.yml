@@ -10,6 +10,6 @@
     volumes:
       - "{{ node_config_directory }}xtrabackup:/etc/mysql:ro"
       - "/etc/localtime:/etc/localtime:ro"
-      - "backup:/backup"
+      - "mariadb_backup:/backup"
     volumes_from:
       - "mariadb"
