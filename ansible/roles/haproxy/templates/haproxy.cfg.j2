@@ -56,6 +56,9 @@ listen outward_rabbitmq_external
   timeout client 3600s
   timeout server 3600s
   bind {{ kolla_external_vip_address }}:{{ outward_rabbitmq_port }}
+{% for tcp_option in haproxy_listen_tcp_extra %}
+  {{ tcp_option }}
+{% endfor %}
 {% for host in groups['outward-rabbitmq'] %}
   server {{ hostvars[host]['ansible_hostname'] }} {{ hostvars[host]['ansible_' + hostvars[host]['api_interface']]['ipv4']['address'] }}:{{ outward_rabbitmq_port }} check inter 2000 rise 2 fall 5
 {% endfor %}
@@ -1135,6 +1138,9 @@ listen mariadb
   option tcpka
   option mysql-check user haproxy post-41
   bind {{ kolla_internal_vip_address }}:{{ mariadb_port }}
+{% for tcp_option in haproxy_listen_tcp_extra %}
+  {{ tcp_option }}
+{% endfor %}
 {% for host in groups['mariadb'] %}
   server {{ hostvars[host]['ansible_hostname'] }} {{ hostvars[host]['ansible_' + hostvars[host]['api_interface']]['ipv4']['address'] }}:{{ mariadb_port }} check inter 2000 rise 2 fall 5 {% if not loop.first %}backup{% endif %}
 
@@ -1169,6 +1175,9 @@ listen opendaylight_ovsdb
   option tcplog
   option tcpka
   bind {{ kolla_internal_vip_address }}:{{ opendaylight_haproxy_ovsdb_port }}
+{% for tcp_option in haproxy_listen_tcp_extra %}
+  {{ tcp_option }}
+{% endfor %}
 {% for host in groups['opendaylight'] %}
   server {{ hostvars[host]['ansible_hostname'] }} {{ hostvars[host]['ansible_' + hostvars[host]['api_interface']]['ipv4']['address'] }}:{{ opendaylight_ovsdb_port }} check inter 2000 rise 2 fall 5 {% if not loop.first %}backup{% endif %}
 
