@@ -3,5 +3,5 @@ backup_database_user: "backup"
 backup_database_address: "{{ kolla_internal_fqdn }}:{{ database_port }}"
 
 xtrabackup_image: "{{ docker_registry ~ '/' if docker_registry else '' }}{{ docker_namespace }}/{{ kolla_base_distro }}-{{ kolla_install_type }}-xtrabackup"
-xtrabackup_tag: "5.0.1"
+xtrabackup_tag: "{{ openstack_release }}"
 xtrabackup_image_full: "{{ xtrabackup_image }}:{{ xtrabackup_tag }}"
