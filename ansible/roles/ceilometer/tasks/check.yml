@@ -1,1 +1,6 @@
 ---
+- name: Checking Ceilometer containers
+  include_role:
+    role: service-check
+  vars:
+    service_check_services: "{{ ceilometer_services }}"

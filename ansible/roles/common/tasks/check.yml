@@ -1,1 +1,6 @@
 ---
+- name: Checking Common containers
+  include_role:
+    role: service-check
+  vars:
+    service_check_services: "{{ common_services }}"

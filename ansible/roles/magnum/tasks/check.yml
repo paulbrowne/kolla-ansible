@@ -1,1 +1,6 @@
 ---
+- name: Checking Magnum containers
+  include_role:
+    role: service-check
+  vars:
+    service_check_services: "{{ magnum_services }}"

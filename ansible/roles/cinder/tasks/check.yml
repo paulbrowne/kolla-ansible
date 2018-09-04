@@ -1,4 +1,10 @@
 ---
+- name: Checking Cinder containers
+  include_role:
+    role: service-check
+  vars:
+    service_check_services: "{{ cinder_services }}"
+
 - name: Cinder sanity check - create volume
   kolla_toolbox:
     module_name: os_volume

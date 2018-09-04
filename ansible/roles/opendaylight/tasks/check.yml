@@ -1,1 +1,6 @@
 ---
+- name: Checking Opendaylight containers
+  include_role:
+    role: service-check
+  vars:
+    service_check_services: "{{ opendaylight_services }}"

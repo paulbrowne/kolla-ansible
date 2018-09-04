@@ -1,1 +1,6 @@
 ---
+- name: Checking Influxdb containers
+  include_role:
+    role: service-check
+  vars:
+    service_check_services: "{{ influxdb_services }}"

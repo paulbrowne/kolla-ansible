@@ -1,1 +1,6 @@
 ---
+- name: Checking Aodh containers
+  include_role:
+    role: service-check
+  vars:
+    service_check_services: "{{ aodh_services }}"

@@ -1,1 +1,6 @@
 ---
+- name: Checking Mongodb containers
+  include_role:
+    role: service-check
+  vars:
+    service_check_services: "{{ mongodb_services }}"

@@ -1,1 +1,6 @@
 ---
+- name: Checking Rabbitmq containers
+  include_role:
+    role: service-check
+  vars:
+    service_check_services: "{{ rabbitmq_services }}"

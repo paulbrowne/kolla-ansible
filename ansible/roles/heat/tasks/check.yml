@@ -1,1 +1,6 @@
 ---
+- name: Checking Heat containers
+  include_role:
+    role: service-check
+  vars:
+    service_check_services: "{{ heat_services }}"

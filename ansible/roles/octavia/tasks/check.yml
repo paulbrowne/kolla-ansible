@@ -1,1 +1,6 @@
 ---
+- name: Checking Octavia containers
+  include_role:
+    role: service-check
+  vars:
+    service_check_services: "{{ octavia_services }}"

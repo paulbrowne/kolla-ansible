@@ -1,1 +1,6 @@
 ---
+- name: Checking Vmtp containers
+  include_role:
+    role: service-check
+  vars:
+    service_check_services: "{{ vmtp_services }}"

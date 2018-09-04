@@ -1,1 +1,11 @@
 ---
+- name: Checking multipathd containers
+  include_role:
+    role: service-check
+  vars:
+    # TODO(mgoddard): use multipathd_services when defined.
+    service_check_services:
+      multipathd:
+        container_name: multipathd
+        enabled: true
+        group: multipathd

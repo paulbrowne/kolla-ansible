@@ -1,0 +1,54 @@
+---
+# Check whether all necessary containers are running.
+- name: Get container facts
+  vars:
+    # List of hosts in all groups for services in service_check_services.
+    service_group_hosts: >-
+      {{ service_check_services.values() |
+         selectattr('group', 'defined') |
+         map(attribute='group') |
+         map('extract', groups) |
+         list |
+         flatten |
+         unique }}
+    # True if any service in service_check_services has host_in_groups set to
+    # true.
+    service_host_in_groups: >-
+      {{ service_check_services.values() |
+         selectattr('host_in_groups', 'defined') |
+         map(attribute='host_in_groups') |
+         map('bool') |
+         select |
+         list |
+         length > 0 }}
+    # True if any service in service_check_services is enabled.
+    service_enabled: >-
+      {{ service_check_services.values() |
+         map(attribute='enabled') |
+         map('bool') |
+         select |
+         list |
+         length > 0 }}
+    service_container_names: >-
+      {{ service_check_services.values() |
+         map(attribute='container_name') |
+         list }}
+  kolla_container_facts:
+    name: "{{ service_container_names }}"
+  register: container_facts
+  when:
+    - inventory_hostname in service_group_hosts or service_host_in_groups
+    - service_enabled
+
+- name: Fail if containers are not running
+  fail:
+    msg: Container {{ item.key }} is not running
+  when:
+    - container_facts is defined
+    - (item.value.group is defined and inventory_hostname in groups[item.value.group]) or
+      item.value.host_in_groups | default(false) | bool
+    - item.value.enabled | bool
+    - item.value.container_name not in container_facts
+  with_dict: "{{ service_check_services }}"
+  loop_control:
+    label: "{{ item.key }}"

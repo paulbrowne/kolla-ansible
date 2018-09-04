@@ -1,1 +1,6 @@
 ---
+- name: Checking Neutron containers
+  include_role:
+    role: service-check
+  vars:
+    service_check_services: "{{ neutron_services }}"

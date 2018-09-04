@@ -1,4 +1,10 @@
 ---
+- name: Checking Barbican containers
+  include_role:
+    role: service-check
+  vars:
+    service_check_services: "{{ barbican_services }}"
+
 - name: Barbican sanity - storing a secret
   shell: >
     docker exec -t barbican_api openstack \

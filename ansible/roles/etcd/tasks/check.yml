@@ -1,1 +1,6 @@
 ---
+- name: Checking Etcd containers
+  include_role:
+    role: service-check
+  vars:
+    service_check_services: "{{ etcd_services }}"

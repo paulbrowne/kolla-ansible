@@ -1,1 +1,6 @@
 ---
+- name: Checking Collectd containers
+  include_role:
+    role: service-check
+  vars:
+    service_check_services: "{{ collectd_services }}"

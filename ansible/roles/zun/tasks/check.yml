@@ -1,1 +1,6 @@
 ---
+- name: Checking Zun containers
+  include_role:
+    role: service-check
+  vars:
+    service_check_services: "{{ zun_services }}"

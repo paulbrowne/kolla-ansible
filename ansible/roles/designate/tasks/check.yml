@@ -1,1 +1,6 @@
 ---
+- name: Checking Designate containers
+  include_role:
+    role: service-check
+  vars:
+    service_check_services: "{{ designate_services }}"

@@ -1,4 +1,10 @@
 ---
+- name: Checking Keystone containers
+  include_role:
+    role: service-check
+  vars:
+    service_check_services: "{{ keystone_services }}"
+
 - name: Keystone sanity checks
   kolla_toolbox:
     module_name: os_auth

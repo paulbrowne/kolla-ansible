@@ -1,4 +1,10 @@
 ---
+- name: Checking Glance containers
+  include_role:
+    role: service-check
+  vars:
+    service_check_services: "{{ glance_services }}"
+
 - name: Glance sanity check - create image
   kolla_toolbox:
     module_name: os_image

@@ -1,1 +1,17 @@
 ---
+- name: Checking iSCSI containers
+  include_role:
+    role: service-check
+  vars:
+    # TODO(mgoddard): use iscsi_services when defined.
+    service_check_services:
+      iscsid:
+        container_name: iscsid
+        enabled: "{{ enable_cinder | bool and enable_cinder_backend_iscsi | bool or enable_ironic | bool }}"
+        host_in_groups: >-
+          {{ ( ( inventory_hostname in groups['compute'] or inventory_hostname in groups['cinder-volume'] ) and enable_cinder | bool and enable_cinder_backend_iscsi | bool )
+             or ( inventory_hostname in groups['ironic-conductor'] and enable_ironic | bool ) }}
+      tgtd:
+        container_name: tgtd
+        enabled: "{{ enable_cinder | bool and enable_cinder_backend_lvm | bool and cinder_iscsi_helper == 'tgtadm' }}"
+        group: tgtd
