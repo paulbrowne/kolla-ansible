@@ -1,5 +1,15 @@
 ---
-- name: Creating xtrabackup database user and setting permissions
+- name: Creating the Percona XtraBackup database
+  kolla_toolbox:
+    module_name: mysql_db
+    module_args:
+      login_host: "{{ database_address }}"
+      login_port: "{{ database_port }}"
+      login_user: "{{ database_user }}"
+      login_password: "{{ database_password }}"
+      name: "{{ backup_database_schema }}"
+
+- name: Creating database backup user and setting permissions
   kolla_toolbox:
     module_name: mysql_user
     module_args:
@@ -9,9 +19,23 @@
       login_password: "{{ database_password }}"
       name: "{{ backup_database_user }}"
       password: "{{ backup_database_password }}"
-      host: "%"
-      priv: "*.*:SELECT,RELOAD,LOCK TABLES,SHOW VIEW,REPLICATION CLIENT"
-      append_privs: "yes"
+      host: "localhost"
+      priv: "*.*:CREATE TABLESPACE,RELOAD,PROCESS,SUPER,LOCK TABLES,REPLICATION CLIENT"
+  run_once: True
+
+- name: Granting permissions on XtraBackup database to backup user
+  kolla_toolbox:
+    module_name: mysql_user
+    module_args:
+      login_host: "{{ database_address }}"
+      login_port: "{{ database_port }}"
+      login_user: "{{ database_user }}"
+      login_password: "{{ database_password }}"
+      name: "{{ backup_database_user }}"
+      password: "{{ backup_database_password }}"
+      host: "localhost"
+      priv: "{{ backup_database_schema }}.*:CREATE,INSERT,SELECT"
+      append_privs: True
   run_once: True
 
 - include: backup.yml

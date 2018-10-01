@@ -1,4 +1,5 @@
 ---
+backup_database_schema: "PERCONA_SCHEMA"
 backup_database_user: "backup"
 backup_database_address: "{{ kolla_internal_fqdn }}:{{ database_port }}"
 
