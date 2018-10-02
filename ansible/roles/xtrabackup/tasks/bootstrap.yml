@@ -19,7 +19,7 @@
       login_password: "{{ database_password }}"
       name: "{{ backup_database_user }}"
       password: "{{ backup_database_password }}"
-      host: "localhost"
+      host: "{{ ansible_hostname }}"
       priv: "*.*:CREATE TABLESPACE,RELOAD,PROCESS,SUPER,LOCK TABLES,REPLICATION CLIENT"
   run_once: True
 
@@ -33,7 +33,7 @@
       login_password: "{{ database_password }}"
       name: "{{ backup_database_user }}"
       password: "{{ backup_database_password }}"
-      host: "localhost"
+      host: "{{ ansible_hostname }}"
       priv: "{{ backup_database_schema }}.*:CREATE,INSERT,SELECT"
       append_privs: True
   run_once: True

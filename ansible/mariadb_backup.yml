@@ -1,7 +1,7 @@
 ---
 - name: Backup mariadb
   hosts: mariadb
-  gather_facts: false
+  gather_facts: true
   tasks:
     - name: Get current kolla-ansible version number
       local_action: command python -c "import pbr.version; print(pbr.version.VersionInfo('kolla-ansible'))"
