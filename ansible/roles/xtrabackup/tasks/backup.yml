@@ -1,12 +1,15 @@
 ---
-- name: Running MariaDB xtrabackup container
+- name: Taking {{ backup_type }} database backup via XtraBackup
   kolla_docker:
     action: "start_container"
     common_options: "{{ docker_common_options }}"
-    detach: False
+    detach: True
     image: "{{ xtrabackup_image_full }}"
     name: "xtrabackup"
     restart_policy: "never"
+    remove_on_exit: True
+    environment:
+      BACKUP_TYPE: "{{ backup_type }}"
     volumes:
       - "{{ node_config_directory }}xtrabackup:/etc/mysql:ro"
       - "/etc/localtime:/etc/localtime:ro"
