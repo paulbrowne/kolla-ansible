@@ -1,2 +1,7 @@
 ---
 - include: "{{ action }}.yml"
+
+- include: backup.yml
+  when:
+    - mariadb_backup | default(False)
+    - inventory_hostname == mariadb_backup_host

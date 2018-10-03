@@ -1,0 +1,72 @@
+---
+- name: Ensuring config directories exist
+  file:
+    path: "{{ node_config_directory }}/{{ item }}"
+    state: "directory"
+    recurse: yes
+  with_items:
+    - "xtrabackup"
+
+- name: Copying over my.cnf for xtrabackup
+  become: true
+  template:
+    src: "backup.my.cnf.j2"
+    dest: "{{ node_config_directory }}xtrabackup/my.cnf"
+    mode: "0770"
+  register: xtrabackup_config_cnf
+
+- name: Creating the Percona XtraBackup database
+  kolla_toolbox:
+    module_name: mysql_db
+    module_args:
+      login_host: "{{ database_address }}"
+      login_port: "{{ database_port }}"
+      login_user: "{{ database_user }}"
+      login_password: "{{ database_password }}"
+      name: "{{ mariadb_backup_database_schema }}"
+
+- name: Creating database backup user and setting permissions
+  kolla_toolbox:
+    module_name: mysql_user
+    module_args:
+      login_host: "{{ database_address }}"
+      login_port: "{{ database_port }}"
+      login_user: "{{ database_user }}"
+      login_password: "{{ database_password }}"
+      name: "{{ mariadb_backup_database_user }}"
+      password: "{{ mariadb_backup_database_password }}"
+      host: "{{ ansible_hostname }}"
+      priv: "*.*:CREATE TABLESPACE,RELOAD,PROCESS,SUPER,LOCK TABLES,REPLICATION CLIENT"
+      append_privs: True
+
+- name: Granting permissions on XtraBackup database to backup user
+  kolla_toolbox:
+    module_name: mysql_user
+    module_args:
+      login_host: "{{ database_address }}"
+      login_port: "{{ database_port }}"
+      login_user: "{{ database_user }}"
+      login_password: "{{ database_password }}"
+      name: "{{ mariadb_backup_database_user }}"
+      password: "{{ mariadb_backup_database_password }}"
+      host: "{{ ansible_hostname }}"
+      priv: "{{ mariadb_backup_database_schema }}.*:CREATE,INSERT,SELECT"
+      append_privs: True
+
+- name: Taking {{ mariadb_backup_type }} database backup via XtraBackup
+  kolla_docker:
+    action: "start_container"
+    common_options: "{{ docker_common_options }}"
+    detach: True
+    image: "{{ xtrabackup_image_full }}"
+    name: "xtrabackup"
+    restart_policy: "never"
+    remove_on_exit: True
+    environment:
+      BACKUP_TYPE: "{{ mariadb_backup_type }}"
+    volumes:
+      - "{{ node_config_directory }}xtrabackup:/etc/mysql:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+      - "mariadb_backup:/backup"
+    volumes_from:
+      - "mariadb"

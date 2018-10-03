@@ -1,5 +1,5 @@
 ---
-- name: Backup mariadb
+- name: Backup MariaDB via XtraBackup
   hosts: mariadb
   gather_facts: true
   tasks:
@@ -13,8 +13,8 @@
         openstack_release: "{{ kolla_ansible_version.stdout }}"
       when: openstack_release == "auto"
   roles:
-    - { role: xtrabackup,
-        tags: xtrabackup,
+    - { role: mariadb,
+        tags: mariadb,
         when: enable_mariadb | bool }
   vars:
     mariadb_backup: true

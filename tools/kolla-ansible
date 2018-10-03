@@ -53,6 +53,7 @@ Commands:
     prechecks           Do pre-deployment checks for hosts
     check               Do post-deployment smoke tests
     mariadb_recovery    Recover a completely stopped mariadb cluster
+    mariadb_backup      Take a backup of MariaDB databases
     bootstrap-servers   Bootstrap servers with kolla deploy dependencies
     destroy             Destroy Kolla containers, volumes and host configuration
                             --include-images to also destroy Kolla images

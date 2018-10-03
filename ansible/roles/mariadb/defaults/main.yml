@@ -26,3 +26,17 @@ database_max_timeout: 120
 mariadb_image: "{{ docker_registry ~ '/' if docker_registry else '' }}{{ docker_namespace }}/{{ kolla_base_distro }}-{{ kolla_install_type }}-mariadb"
 mariadb_tag: "{{ openstack_release }}"
 mariadb_image_full: "{{ mariadb_image }}:{{ mariadb_tag }}"
+
+####################
+# Backups
+####################
+xtrabackup_image: "{{ docker_registry ~ '/' if docker_registry else '' }}{{ docker_namespace }}/{{ kolla_base_distro }}-{{ kolla_install_type }}-xtrabackup"
+xtrabackup_tag: "{{ openstack_release }}"
+xtrabackup_image_full: "{{ xtrabackup_image }}:{{ xtrabackup_tag }}"
+
+mariadb_backup_host: "{{ groups['mariadb'][0] }}"
+mariadb_backup_database_schema: "PERCONA_SCHEMA"
+mariadb_backup_database_user: "backup"
+mariadb_backup_database_address: "{{ kolla_internal_fqdn }}:{{ database_port }}"
+mariadb_backup_type: "full"
+
