@@ -8,7 +8,7 @@
     dest: "{{ node_config_directory }}/glance-api/ceph.conf"
     mode: "0660"
   become: true
-  when: inventory_hostname in groups['glance-api']
+  when: glance_services | service_enabled_and_mapped_to_host
 
 - include_tasks: ../../ceph_pools.yml
   vars:

@@ -13,6 +13,7 @@
       variable: log_bin_trust_function_creators
       value: 1
   run_once: True
+  # FIXME
   delegate_to: "{{ groups[glance_api.group][0] }}"
   when:
     - not use_preconfigured_databases | bool

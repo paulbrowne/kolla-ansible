@@ -7,10 +7,7 @@
     group: "{{ config_owner_group }}"
     mode: "0770"
   become: true
-  when:
-    - inventory_hostname in groups[item.value.group]
-    - item.value.enabled | bool
-  with_dict: "{{ glance_services }}"
+  with_dict: "{{ glance_services | select_services_enabled_and_mapped_to_host }}"
 
 - include_tasks: ceph.yml
   when:
@@ -46,12 +43,9 @@
     mode: "0660"
   become: true
   register: glance_config_jsons
-  when:
-    - item.value.enabled | bool
-    - inventory_hostname in groups[item.value.group]
-  with_dict: "{{ glance_services }}"
+  with_dict: "{{ glance_services | select_services_enabled_and_mapped_to_host }}"
   notify:
-    - Restart glance-api container
+    - "Restart {{ item.key }} container"
 
 - name: Copying over glance-*.conf
   vars:
@@ -67,52 +61,43 @@
     mode: "0660"
   become: true
   register: glance_confs
-  when:
-    - item.value.enabled | bool
-    - inventory_hostname in groups[item.value.group]
-  with_dict: "{{ glance_services }}"
+  with_dict: "{{ glance_services | select_services_enabled_and_mapped_to_host }}"
   notify:
-    - Restart glance-api container
+    - "Restart {{ item.key }} container"
 
 - name: Copying over glance-cache.conf for glance_api
-  vars:
-    glance_api: "{{ glance_services['glance-api'] }}"
   merge_configs:
     sources:
       - "{{ role_path }}/templates/glance-cache.conf.j2"
       - "{{ node_custom_config }}/glance-cache.conf"
       - "{{ node_custom_config }}/glance/glance-cache.conf"
       - "{{ node_custom_config }}/glance/{{ inventory_hostname }}/glance-cache.conf"
-    dest: "{{ node_config_directory }}/glance-api/glance-cache.conf"
+    dest: "{{ node_config_directory }}/{{ item.key }}/glance-cache.conf"
     mode: "0660"
   become: true
   register: glance_cache_conf
   when:
-    - glance_api.enabled | bool
-    - inventory_hostname in groups[glance_api.group]
     - enable_glance_image_cache | bool
+  with_dict: "{{ glance_services | select_services_enabled_and_mapped_to_host }}"
   notify:
-    - Restart glance-api container
+    - "Restart {{ item.key }} container"
 
 - name: Copying over glance-swift.conf for glance_api
-  vars:
-    glance_api: "{{ glance_services['glance-api'] }}"
   merge_configs:
     sources:
       - "{{ role_path }}/templates/glance-swift.conf.j2"
       - "{{ node_custom_config }}/glance-swift.conf"
       - "{{ node_custom_config }}/glance/glance-swift.conf"
       - "{{ node_custom_config }}/glance/{{ inventory_hostname }}/glance-swift.conf"
-    dest: "{{ node_config_directory }}/glance-api/glance-swift.conf"
+    dest: "{{ node_config_directory }}/{{ item.key }}/glance-swift.conf"
     mode: "0660"
   become: true
   register: glance_swift_conf
+  with_dict: "{{ glance_services | select_services_enabled_and_mapped_to_host }}"
   when:
-    - glance_api.enabled | bool
-    - inventory_hostname in groups[glance_api.group]
     - glance_backend_swift | bool
   notify:
-    - Restart glance-api container
+    - "Restart {{ item.key }} container"
 
 - name: Copying over existing policy file
   template:
@@ -123,11 +108,9 @@
   register: glance_policy_overwriting
   when:
     - glance_policy_file is defined
-    - inventory_hostname in groups[item.value.group]
-    - item.value.enabled | bool
-  with_dict: "{{ glance_services }}"
+  with_dict: "{{ glance_services | select_services_enabled_and_mapped_to_host }}"
   notify:
-    - Restart glance-api container
+    - "Restart {{ item.key }} container"
 
 - name: Check glance containers
   become: true
@@ -142,8 +125,6 @@
   register: check_glance_containers
   when:
     - kolla_action != "config"
-    - inventory_hostname in groups[item.value.group]
-    - item.value.enabled | bool
-  with_dict: "{{ glance_services }}"
+  with_dict: "{{ glance_services | select_services_enabled_and_mapped_to_host }}"
   notify:
-    - Restart glance-api container
+    - "Restart {{ item.key }} container"
