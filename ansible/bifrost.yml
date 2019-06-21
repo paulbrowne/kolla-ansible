@@ -5,6 +5,7 @@
 
 - name: Apply role bifrost
   hosts: bifrost
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   roles:
     - { role: bifrost,
         tags: bifrost}

@@ -5,6 +5,7 @@
 
 - name: Backup MariaDB
   hosts: mariadb
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   roles:
     - { role: mariadb,
         tags: mariadb,

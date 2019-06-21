@@ -8,6 +8,7 @@
   hosts: all
   serial: '{{ kolla_serial|default("0") }}'
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   tasks:
     - name: Gather facts
       setup:
@@ -27,6 +28,7 @@
   hosts: all_using_limit_True
   serial: '{{ kolla_serial|default("0") }}'
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   vars:
     batch_index: "{{ ansible_play_batch.index(inventory_hostname) }}"
     batch_size: "{{ ansible_play_batch | length }}"

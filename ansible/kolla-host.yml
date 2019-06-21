@@ -5,6 +5,7 @@
   hosts: baremetal
   serial: '{{ kolla_serial|default("0") }}'
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   roles:
     - { role: baremetal,
         tags: baremetal }

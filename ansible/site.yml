@@ -7,6 +7,7 @@
 - name: Group hosts based on configuration
   hosts: all
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   tasks:
     - name: Group hosts based on OpenStack release
       group_by:
@@ -95,6 +96,7 @@
 
 - name: Apply role prechecks
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   # Apply only when kolla action is 'precheck'.
   hosts: kolla_action_precheck
   roles:
@@ -102,6 +104,7 @@
 
 - name: Apply role chrony
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - chrony-server
     - chrony
@@ -114,6 +117,7 @@
 
 - name: Apply role haproxy
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - haproxy
     - '&enable_haproxy_True'
@@ -371,6 +375,7 @@
 
 - name: Apply role collectd
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - collectd
     - '&enable_collectd_True'
@@ -382,6 +387,7 @@
 
 - name: Apply role zookeeper
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - zookeeper
     - '&enable_zookeeper_True'
@@ -393,6 +399,7 @@
 
 - name: Apply role elasticsearch
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - elasticsearch
     - '&enable_elasticsearch_True'
@@ -404,6 +411,7 @@
 
 - name: Apply role influxdb
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - influxdb
     - '&enable_influxdb_True'
@@ -415,6 +423,7 @@
 
 - name: Apply role telegraf
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - telegraf
     - '&enable_telegraf_True'
@@ -426,6 +435,7 @@
 
 - name: Apply role redis
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - redis
     - '&enable_redis_True'
@@ -437,6 +447,7 @@
 
 - name: Apply role kibana
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - kibana
     - '&enable_kibana_True'
@@ -448,6 +459,7 @@
 
 - name: Apply role mariadb
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - mariadb
     - '&enable_mariadb_True'
@@ -458,6 +470,7 @@
 
 - name: Apply role memcached
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - memcached
     - '&enable_memcached_True'
@@ -469,6 +482,7 @@
 
 - name: Apply role prometheus
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - prometheus
     - prometheus-node-exporter
@@ -487,6 +501,7 @@
 
 - name: Apply role iscsi
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - iscsid
     - tgtd
@@ -499,6 +514,7 @@
 
 - name: Apply role multipathd
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - multipathd
     - '&enable_multipathd_True'
@@ -510,6 +526,7 @@
 
 - name: Apply role rabbitmq
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - rabbitmq
     - '&enable_rabbitmq_True'
@@ -530,6 +547,7 @@
 
 - name: Apply role rabbitmq (outward)
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - outward-rabbitmq
     - '&enable_outward_rabbitmq_True'
@@ -549,6 +567,7 @@
 
 - name: Apply role qdrouterd
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - qdrouterd
     - '&enable_qdrouterd_True'
@@ -560,6 +579,7 @@
 
 - name: Apply role etcd
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - etcd
     - '&enable_etcd_True'
@@ -571,6 +591,7 @@
 
 - name: Apply role keystone
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - keystone
     - '&enable_keystone_True'
@@ -582,6 +603,7 @@
 
 - name: Apply role ceph
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - ceph-mds
     - ceph-mgr
@@ -598,6 +620,7 @@
 
 - name: Apply role kafka
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - kafka
     - '&enable_kafka_True'
@@ -609,6 +632,7 @@
 
 - name: Apply role storm
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - storm-worker
     - storm-nimbus
@@ -620,6 +644,7 @@
 
 - name: Apply role karbor
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - karbor
     - '&enable_karbor_True'
@@ -631,6 +656,7 @@
 
 - name: Apply role swift
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - swift-account-server
     - swift-container-server
@@ -645,6 +671,7 @@
 
 - name: Apply role glance
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - ceph-mon
     - glance-api
@@ -657,6 +684,7 @@
 
 - name: Apply role ironic
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - ironic-api
     - ironic-conductor
@@ -671,6 +699,7 @@
 
 - name: Apply role cinder
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - ceph-mon
     - cinder-api
@@ -686,6 +715,7 @@
 
 - name: Apply role placement
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - placement-api
     - '&enable_placement_True'
@@ -697,6 +727,7 @@
 
 - name: Apply role nova
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - ceph-mon
     - compute
@@ -714,6 +745,7 @@
 
 - name: Apply role opendaylight
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - opendaylight
     - '&enable_opendaylight_True'
@@ -725,6 +757,7 @@
 
 - name: Apply role openvswitch
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - openvswitch
     - '&enable_openvswitch_True_enable_ovs_dpdk_False'
@@ -736,6 +769,7 @@
 
 - name: Apply role ovs-dpdk
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - openvswitch
     - '&enable_openvswitch_True_enable_ovs_dpdk_True'
@@ -747,6 +781,7 @@
 
 - name: Apply role nova-hyperv
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - hyperv
     - '&enable_hyperv_True'
@@ -760,6 +795,7 @@
 # workaround to fix the bug https://bugs.launchpad.net/kolla/+bug/1546789
 - name: Apply role neutron
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - neutron-server
     - neutron-dhcp-agent
@@ -779,6 +815,7 @@
 
 - name: Apply role kuryr
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - compute
     - '&enable_kuryr_True'
@@ -790,6 +827,7 @@
 
 - name: Apply role heat
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - heat-api
     - heat-api-cfn
@@ -803,6 +841,7 @@
 
 - name: Apply role horizon
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - horizon
     - '&enable_horizon_True'
@@ -814,6 +853,7 @@
 
 - name: Apply role murano
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - murano-api
     - murano-engine
@@ -826,6 +866,7 @@
 
 - name: Apply role solum
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - solum-api
     - solum-worker
@@ -840,6 +881,7 @@
 
 - name: Apply role magnum
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - magnum-api
     - magnum-conductor
@@ -852,6 +894,7 @@
 
 - name: Apply role mistral
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - mistral-api
     - mistral-engine
@@ -865,6 +908,7 @@
 
 - name: Apply role sahara
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - sahara-api
     - sahara-engine
@@ -877,6 +921,7 @@
 
 - name: Apply role mongodb
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - mongodb
     - '&enable_mongodb_True'
@@ -888,6 +933,7 @@
 
 - name: Apply role panko
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - panko-api
     - '&enable_panko_True'
@@ -899,6 +945,7 @@
 
 - name: Apply role manila
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - ceph-mon
     - manila-api
@@ -914,6 +961,7 @@
 
 - name: Apply role gnocchi
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - ceph-mon
     - gnocchi-api
@@ -928,6 +976,7 @@
 
 - name: Apply role ceilometer
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   vars_files:
     - "roles/panko/defaults/main.yml"
   hosts:
@@ -944,6 +993,7 @@
 
 - name: Apply role monasca
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - monasca
     - monasca-agent
@@ -965,6 +1015,7 @@
 
 - name: Apply role aodh
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - aodh-api
     - aodh-evaluator
@@ -979,6 +1030,7 @@
 
 - name: Apply role barbican
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - barbican-api
     - barbican-keystone-listener
@@ -992,6 +1044,7 @@
 
 - name: Apply role congress
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - congress-api
     - congress-policy-engine
@@ -1005,6 +1058,7 @@
 
 - name: Apply role cyborg
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - cyborg
     - '&enable_cyborg_True'
@@ -1016,6 +1070,7 @@
 
 - name: Apply role tempest
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - tempest
     - '&enable_tempest_True'
@@ -1027,6 +1082,7 @@
 
 - name: Apply role designate
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - designate-api
     - designate-central
@@ -1044,6 +1100,7 @@
 
 - name: Apply role rally
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - rally
     - '&enable_rally_True'
@@ -1055,6 +1112,7 @@
 
 - name: Apply role vmtp
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - vmtp
     - '&enable_vmtp_True'
@@ -1066,6 +1124,7 @@
 
 - name: Apply role trove
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - trove-api
     - trove-conductor
@@ -1079,6 +1138,7 @@
 
 - name: Apply role watcher
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - watcher-api
     - watcher-engine
@@ -1092,6 +1152,7 @@
 
 - name: Apply role grafana
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - grafana
     - '&enable_grafana_True'
@@ -1103,6 +1164,7 @@
 
 - name: Apply role cloudkitty
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - cloudkitty-api
     - cloudkitty-processor
@@ -1115,6 +1177,7 @@
 
 - name: Apply role freezer
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - freezer-api
     - freezer-scheduler
@@ -1127,6 +1190,7 @@
 
 - name: Apply role senlin
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - senlin-api
     - senlin-engine
@@ -1139,6 +1203,7 @@
 
 - name: Apply role searchlight
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - searchlight-api
     - searchlight-listener
@@ -1151,6 +1216,7 @@
 
 - name: Apply role tacker
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - tacker-server
     - tacker-conductor
@@ -1163,6 +1229,7 @@
 
 - name: Apply role octavia
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - octavia-api
     - octavia-health-manager
@@ -1177,6 +1244,7 @@
 
 - name: Apply role zun
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - zun-api
     - zun-wsproxy
@@ -1190,6 +1258,7 @@
 
 - name: Apply role skydive
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - skydive-agent
     - skydive-analyzer
@@ -1202,6 +1271,7 @@
 
 - name: Apply role vitrage
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - vitrage-api
     - vitrage-graph
@@ -1216,6 +1286,7 @@
 
 - name: Apply role blazar
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   hosts:
     - blazar-api
     - blazar-manager

@@ -2,6 +2,7 @@
 - name: Detect openstack_release variable
   hosts: "{{ detect_release_hosts }}"
   gather_facts: false
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   tasks:
     - name: Get current kolla-ansible version number
       local_action: command python -c "import pbr.version; print(pbr.version.VersionInfo('kolla-ansible'))"

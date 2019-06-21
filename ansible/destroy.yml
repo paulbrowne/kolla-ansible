@@ -1,5 +1,6 @@
 ---
 - name: Apply role destroy
   hosts: all
+  any_errors_fatal: "{{ kolla_any_errors_fatal | default(true) }}"
   roles:
     - destroy
