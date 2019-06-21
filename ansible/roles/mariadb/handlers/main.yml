@@ -68,7 +68,6 @@
     labels:
       UPGRADE:
     restart_policy: "never"
-  no_log: true
   when:
     - kolla_action != "config"
     - has_cluster | bool
@@ -132,7 +131,6 @@
     name: "upgrade_mariadb"
     restart_policy: "never"
     volumes: "{{ service.volumes }}"
-  no_log: true
   when:
     - kolla_action == "upgrade"
     - inventory_hostname != master_host
@@ -164,7 +162,6 @@
     labels:
       UPGRADE:
     restart_policy: "never"
-  no_log: true
   when:
     - kolla_action != "config"
     - inventory_hostname == master_host
@@ -227,7 +224,6 @@
     name: "upgrade_mariadb"
     restart_policy: "never"
     volumes: "{{ service.volumes }}"
-  no_log: true
   when:
     - kolla_action == "upgrade"
     - inventory_hostname == master_host
