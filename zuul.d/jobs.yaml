@@ -178,6 +178,38 @@
         ceph_osd_storetype: bluestore
 
 - job:
+    name: kolla-ansible-centos-source-upgrade-ceph-1
+    parent: kolla-ansible-centos-source-upgrade-ceph
+
+- job:
+    name: kolla-ansible-centos-source-upgrade-ceph-2
+    parent: kolla-ansible-centos-source-upgrade-ceph
+
+- job:
+    name: kolla-ansible-centos-source-upgrade-ceph-3
+    parent: kolla-ansible-centos-source-upgrade-ceph
+
+- job:
+    name: kolla-ansible-centos-source-upgrade-ceph-4
+    parent: kolla-ansible-centos-source-upgrade-ceph
+
+- job:
+    name: kolla-ansible-ubuntu-source-upgrade-ceph-1
+    parent: kolla-ansible-ubuntu-source-upgrade-ceph
+
+- job:
+    name: kolla-ansible-ubuntu-source-upgrade-ceph-2
+    parent: kolla-ansible-ubuntu-source-upgrade-ceph
+
+- job:
+    name: kolla-ansible-ubuntu-source-upgrade-ceph-3
+    parent: kolla-ansible-ubuntu-source-upgrade-ceph
+
+- job:
+    name: kolla-ansible-ubuntu-source-upgrade-ceph-4
+    parent: kolla-ansible-ubuntu-source-upgrade-ceph
+
+- job:
     name: kolla-ansible-bifrost-centos-source
     parent: kolla-ansible-bifrost-base
     nodeset: kolla-ansible-centos
