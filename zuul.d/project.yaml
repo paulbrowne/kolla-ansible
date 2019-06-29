@@ -20,8 +20,6 @@
         - kolla-ansible-centos-source-upgrade-ceph-4
         - kolla-ansible-ubuntu-source-upgrade-ceph-1
         - kolla-ansible-ubuntu-source-upgrade-ceph-2
-        - kolla-ansible-ubuntu-source-upgrade-ceph-3
-        - kolla-ansible-ubuntu-source-upgrade-ceph-4
     gate:
       jobs:
         - kolla-ansible-centos-source

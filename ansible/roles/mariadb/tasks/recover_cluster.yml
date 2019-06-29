@@ -69,18 +69,28 @@
             restart_policy: "never"
           no_log: true
 
-        - name: Wait for MariaDB shutdown
-          vars:
-            service_name: "mariadb"
-            service: "{{ mariadb_services[service_name] }}"
-          become: true
-          kolla_container_facts:
-            name:
-              - "{{ service.container_name }}"
-          register: mariadb_container_facts
-          until: service.container_name not in mariadb_container_facts
-          retries: 30
-          delay: 2
+        - block:
+            - name: Wait for MariaDB shutdown
+              vars:
+                service_name: "mariadb"
+                service: "{{ mariadb_services[service_name] }}"
+              become: true
+              kolla_container_facts:
+                name:
+                  - "{{ service.container_name }}"
+              register: mariadb_container_facts
+              until: service.container_name not in mariadb_container_facts
+              retries: 30
+              delay: 2
+          rescue:
+            # Sometimes the mariadb service can get into a partially shutdown
+            # state following a 'mysqladmin shutdown'. Stop the container.
+            - name: Stop MariaDB container
+              become: true
+              kolla_docker:
+                action: "stop_container"
+                common_options: "{{ docker_common_options }}"
+                name: "{{ mariadb_service.container_name }}"
 
         - name: Replace restart policy on MariaDB
           vars:
@@ -217,6 +227,23 @@
 - name: Set first MariaDB container as primary
   shell: "docker exec {{ mariadb_service.container_name }} mysql -uroot -p{{ database_password }} -e \"SET GLOBAL wsrep_provider_options='pc.bootstrap=yes';\""
   no_log: True
+  when:
+    - bootstrap_host is defined
+    - bootstrap_host == inventory_hostname
+
+- name: Wait for MariaDB to become operational
+  become: true
+  command: >-
+    docker exec {{ mariadb_service.container_name }}
+    mysql -uroot -p{{ database_password }}
+    --silent --skip-column-names
+    -e 'SHOW STATUS LIKE "wsrep_evs_state"'
+  changed_when: false
+  register: result
+  until: '"OPERATIONAL" in result.stdout'
+  retries: 10
+  delay: 6
+  no_log: true
   when:
     - bootstrap_host is defined
     - bootstrap_host == inventory_hostname

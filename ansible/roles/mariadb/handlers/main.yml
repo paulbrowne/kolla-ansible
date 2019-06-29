@@ -42,6 +42,24 @@
     - bootstrap_host == inventory_hostname
   listen: Bootstrap MariaDB cluster
 
+- name: Wait for MariaDB to become operational
+  become: true
+  command: >-
+    docker exec {{ mariadb_service.container_name }}
+    mysql -uroot -p{{ database_password }}
+    --silent --skip-column-names
+    -e 'SHOW STATUS LIKE "wsrep_evs_state"'
+  changed_when: false
+  register: result
+  until: '"OPERATIONAL" in result.stdout'
+  retries: 10
+  delay: 6
+  no_log: true
+  when:
+    - bootstrap_host is defined
+    - bootstrap_host == inventory_hostname
+  listen: Bootstrap MariaDB cluster
+
 # NOTE(mgoddard): In Rocky the MariaDB image had an issue where it would not
 # stop on demand, and would result in Docker forcibly killing the container.
 # This could lead to a failed upgrade if the new image is unable to recover
