@@ -1,0 +1,50 @@
+---
+# Expects the following variables:
+# - config: openssl config file
+# - cert: path to certificate file to be created
+# - key: path to key file to be created
+# - cacert: path to CA certificate file to be created
+
+- name: "Ensuring {{ name }} certificate and key directories exist"
+  file:
+    path: "{{ item | dirname }}"
+    state: "directory"
+    recurse: yes
+    mode: "0770"
+  with_items:
+    - "{{ cert }}"
+    - "{{ key }}"
+
+- name: "Creating {{ name }} TLS configuration file"
+  template:
+    src: "{{ config }}.j2"
+    dest: "{{ kolla_certificates_dir }}/{{ config }}"
+    mode: "0660"
+
+- name: "Creating {{ name }} key"
+  command:
+    cmd: "openssl genrsa -out {{ key }}"
+    creates: "{{ key }}"
+
+- name: "Setting permissions on {{ name }} key"
+  file:
+    path: "{{ key }}"
+    mode: "0660"
+    state: file
+
+- name: "Creating {{ name }} server certificate"
+  command:
+    creates: "{{ cert }}"
+    cmd: >-
+      openssl req -new -nodes -sha256 -x509
+      -config {{ kolla_certificates_dir }}/{{ config }}
+      -days 3650
+      -extensions v3_req
+      -key {{ key }}
+      -out {{ cert }}
+
+- name: "Creating {{ name }} certificate file to be included in container trusted ca-certificates"
+  copy:
+    src: "{{ cert }}"
+    dest: "{{ cacert }}"
+    mode: "0660"

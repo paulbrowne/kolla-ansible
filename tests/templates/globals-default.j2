@@ -127,6 +127,7 @@ openstack_cacert: "/usr/local/share/ca-certificates/kolla-customca-haproxy-inter
 {% if base_distro == "centos" %}
 openstack_cacert: "/etc/pki/ca-trust/source/anchors/kolla-customca-haproxy-internal.crt"
 {% endif %}
+rabbitmq_enable_tls: "yes"
 {% endif %}
 
 {% if scenario == 'linuxbridge' %}

@@ -110,6 +110,7 @@ openstack_projects = [
     'neutron-vpnaas',
     'neutron',
     'nova',
+    'oslo.messaging',
     'oslotest',
     'swift',
 ]

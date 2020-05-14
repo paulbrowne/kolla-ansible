@@ -174,3 +174,13 @@
         mode: "0660"
   when:
     - kolla_enable_tls_backend | bool
+
+- include_tasks: generate_cert.yml
+  vars:
+    name: RabbitMQ
+    config: "openssl-kolla-rabbitmq.cnf"
+    cert: "{{ kolla_certificates_dir }}/rabbitmq-cert.pem"
+    key: "{{ kolla_certificates_dir }}/rabbitmq-key.pem"
+    cacert: "{{ kolla_certificates_dir }}/ca/rabbitmq-cert.crt"
+  when:
+    - rabbitmq_enable_tls | bool
