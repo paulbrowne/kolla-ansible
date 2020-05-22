@@ -38,6 +38,7 @@ user_domain_name = {{ default_user_domain_id }}
 project_name = service
 username = {{ tacker_keystone_user }}
 password = {{ tacker_keystone_password }}
+cafile = {{ openstack_cacert }}
 
 memcache_security_strategy = ENCRYPT
 memcache_secret_key = {{ memcache_secret_key }}
@@ -61,6 +62,12 @@ driver = messagingv2
 topics = {{ tacker_enabled_notification_topics | map(attribute='name') | join(',') }}
 {% else %}
 driver = noop
+{% endif %}
+
+{% if om_enable_rabbitmq_tls | bool %}
+[oslo_messaging_rabbit]
+ssl = true
+ssl_ca_file = {{ om_rabbitmq_cacert }}
 {% endif %}
 
 {% if tacker_policy_file is defined %}

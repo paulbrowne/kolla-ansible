@@ -49,6 +49,7 @@ user_domain_id = {{ default_user_domain_id }}
 project_name = service
 username = {{ heat_keystone_user }}
 password = {{ heat_keystone_password }}
+cafile = {{ openstack_cacert }}
 
 memcache_security_strategy = ENCRYPT
 memcache_secret_key = {{ memcache_secret_key }}
@@ -81,6 +82,12 @@ topics = {{ heat_enabled_notification_topics | map(attribute='name') | join(',')
 driver = noop
 {% endif %}
 
+{% if om_enable_rabbitmq_tls | bool %}
+[oslo_messaging_rabbit]
+ssl = true
+ssl_ca_file = {{ om_rabbitmq_cacert }}
+{% endif %}
+
 {% if heat_policy_file is defined %}
 [oslo_policy]
 policy_file = {{ heat_policy_file }}
@@ -88,7 +95,7 @@ policy_file = {{ heat_policy_file }}
 
 [clients]
 endpoint_type = internalURL
-ca_file = {{ openstack_cacert | default(omit) }}
+ca_file = {{ openstack_cacert }}
 
 [oslo_middleware]
 enable_proxy_headers_parsing = True

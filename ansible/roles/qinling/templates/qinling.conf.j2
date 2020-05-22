@@ -28,6 +28,7 @@ project_name = service
 username = {{ qinling_keystone_user }}
 password = {{ qinling_keystone_password }}
 region_name = {{ openstack_region_name }}
+cafile = {{ openstack_cacert }}
 
 memcache_security_strategy = ENCRYPT
 memcache_secret_key = {{ memcache_secret_key }}
@@ -50,6 +51,12 @@ driver = messagingv2
 topics = notifications
 {% else %}
 driver = noop
+{% endif %}
+
+{% if om_enable_rabbitmq_tls | bool %}
+[oslo_messaging_rabbit]
+ssl = true
+ssl_ca_file = {{ om_rabbitmq_cacert }}
 {% endif %}
 
 {% if qinling_policy_file is defined %}

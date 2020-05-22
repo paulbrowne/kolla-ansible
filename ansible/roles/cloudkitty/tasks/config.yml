@@ -51,6 +51,10 @@
   set_fact:
     cloudkitty_custom_metrics_used: "{{ cloudkitty_custom_metrics_file.stat.exists }}"
 
+- include_tasks: copy-certs.yml
+  when:
+    - kolla_copy_ca_into_containers | bool
+
 - name: Copying over config.json files for services
   template:
     src: "{{ item.key }}.json.j2"

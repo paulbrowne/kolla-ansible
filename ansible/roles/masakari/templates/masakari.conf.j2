@@ -28,6 +28,7 @@ username = {{ masakari_keystone_user }}
 password = {{ masakari_keystone_password }}
 service_token_roles_required = True
 region_name = {{ openstack_region_name }}
+cafile = {{ openstack_cacert }}
 
 {% if enable_memcached | bool %}
 memcache_security_strategy = ENCRYPT
@@ -42,6 +43,12 @@ driver = messagingv2
 topics = notifications
 {% else %}
 driver = noop
+{% endif %}
+
+{% if om_enable_rabbitmq_tls | bool %}
+[oslo_messaging_rabbit]
+ssl = true
+ssl_ca_file = {{ om_rabbitmq_cacert }}
 {% endif %}
 
 [oslo_middleware]

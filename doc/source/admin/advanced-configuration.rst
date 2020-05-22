@@ -69,6 +69,8 @@ RabbitMQ doesn't work with IP address, hence the IP address of
 ``api_interface`` should be resolvable by hostnames to make sure that
 all RabbitMQ Cluster hosts can resolve each others hostname beforehand.
 
+.. _tls-configuration:
+
 TLS Configuration
 ~~~~~~~~~~~~~~~~~
 
@@ -99,12 +101,12 @@ The default for TLS is disabled, to enable TLS networking:
 .. code-block:: yaml
 
    kolla_enable_tls_external: "yes"
-   kolla_external_fqdn_cert: "{{ node_config }}/certificates/mycert.pem"
+   kolla_external_fqdn_cert: "{{ kolla_certificates_dir }}/mycert.pem"
 
    and/or
 
    kolla_enable_tls_internal: "yes"
-   kolla_internal_fqdn_cert: "{{ node_config }}/certificates/mycert-internal.pem"
+   kolla_internal_fqdn_cert: "{{ kolla_certificates_dir }}/mycert-internal.pem"
 
 
 .. note::
@@ -140,7 +142,7 @@ have settings similar to this:
    export OS_PASSWORD=demo-password
    export OS_AUTH_URL=https://mykolla.example.net:5000
    # os_cacert is optional for trusted certificates
-   export OS_CACERT=/etc/pki/mykolla-cacert.crt
+   export OS_CACERT=/etc/pki/ca/mykolla-cacert.crt
    export OS_IDENTITY_API_VERSION=3
 
 Self-Signed Certificates
@@ -162,8 +164,40 @@ configuration file:
 
    kolla-ansible certificates
 
-The files haproxy.pem and haproxy-ca.pem will be generated and stored
-in the ``/etc/kolla/certificates/`` directory.
+The certificate file haproxy.pem will be generated and stored in the
+``/etc/kolla/certificates/`` directory, and the CA cert will be in the
+``/etc/kolla/certificates/ca/`` directory.
+
+Adding CA Certificates to the Service Containers
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To copy CA certificate files to the service containers
+
+.. code-block:: yaml
+
+   kolla_copy_ca_into_containers: "yes"
+
+When ``kolla_copy_ca_into_containers`` is configured to "yes", the
+CA certificate files in /etc/kolla/certificates/ca will be copied into
+service containers to enable trust for those CA certificates. This is required
+for any certificates that are either self-signed or signed by a private CA,
+and are not already present in the service image trust store.
+
+All certificate file names will have the "kolla-customca-" prefix prepended to
+it when it is copied into the containers. For example, if a certificate file is
+named "internal.crt", it will be named "kolla-customca-internal.crt" in the
+containers.
+
+For Debian and Ubuntu containers, the certificate files will be copied to
+the ``/usr/local/share/ca-certificates/`` directory.
+
+For Centos and Red Hat Linux containers, the certificate files will be copied
+to the ``/etc/pki/ca-trust/source/anchors/`` directory.
+
+In addition, the ``openstack_cacert`` should be configured with the path to
+the cacert in the container. For example, if the self-signed certificate task
+was used and the deployment is on ubuntu, the path would be:
+"/etc/pki/ca-trust/source/anchors/kolla-customca-haproxy-internal.crt"
 
 .. _service-config:
 

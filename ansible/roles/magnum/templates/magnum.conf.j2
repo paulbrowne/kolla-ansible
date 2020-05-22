@@ -65,6 +65,7 @@ user_domain_name = {{ default_user_domain_name }}
 project_name = service
 username = {{ magnum_keystone_user }}
 password = {{ magnum_keystone_password }}
+cafile = {{ openstack_cacert }}
 
 memcache_security_strategy = ENCRYPT
 memcache_secret_key = {{ memcache_secret_key }}
@@ -96,6 +97,12 @@ driver = messaging
 topics = {{ magnum_enabled_notification_topics | map(attribute='name') | join(',') }}
 {% else %}
 driver = noop
+{% endif %}
+
+{% if om_enable_rabbitmq_tls | bool %}
+[oslo_messaging_rabbit]
+ssl = true
+ssl_ca_file = {{ om_rabbitmq_cacert }}
 {% endif %}
 
 {% if magnum_policy_file is defined %}

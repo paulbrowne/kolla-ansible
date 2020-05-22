@@ -12,6 +12,12 @@ transport_url = {{ rpc_transport_url }}
 [oslo_messaging_notifications]
 transport_url = {{ notify_transport_url }}
 
+{% if om_enable_rabbitmq_tls | bool %}
+[oslo_messaging_rabbit]
+ssl = true
+ssl_ca_file = {{ om_rabbitmq_cacert }}
+{% endif %}
+
 [ironic]
 {% if enable_keystone | bool %}
 auth_url = {{ keystone_admin_url }}
@@ -22,6 +28,7 @@ project_name = service
 username = {{ ironic_inspector_keystone_user }}
 password = {{ ironic_inspector_keystone_password }}
 os_endpoint_type = internalURL
+cafile = {{ openstack_cacert }}
 {% else %}
 auth_type = none
 endpoint_override = {{ ironic_internal_endpoint }}
@@ -37,6 +44,7 @@ user_domain_id = {{ default_user_domain_id }}
 project_name = service
 username = {{ ironic_inspector_keystone_user }}
 password = {{ ironic_inspector_keystone_password }}
+cafile = {{ openstack_cacert }}
 
 memcache_security_strategy = ENCRYPT
 memcache_secret_key = {{ memcache_secret_key }}

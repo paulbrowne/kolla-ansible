@@ -52,6 +52,10 @@
     fluentd_binary: "{% if fluentd_labels.images.0.ContainerConfig.Labels.fluentd_binary is not defined %}{% if kolla_base_distro in 'ubuntu' and ansible_architecture == 'x86_64' %}td-agent{% else %}fluentd{% endif %}{% else %}{{ fluentd_labels.images.0.ContainerConfig.Labels.fluentd_binary }}{% endif %}"
   when: enable_fluentd | bool
 
+- include_tasks: copy-certs.yml
+  when:
+    - kolla_copy_ca_into_containers | bool
+
 - name: Copying over config.json files for services
   template:
     src: "{{ item.key }}.json.j2"
