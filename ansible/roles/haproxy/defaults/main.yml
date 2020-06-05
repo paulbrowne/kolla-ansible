@@ -39,6 +39,11 @@ syslog_haproxy_facility: "local1"
 # Traffic mode. Valid options are [ multicast, unicast ]
 keepalived_traffic_mode: "multicast"
 
+# List of 'virtual_rules' to apply to the VRRP instance.
+keepalived_virtual_rules: []
+# List of 'virtual_routes' to apply to the VRRP instance.
+keepalived_virtual_routes: []
+
 # Extended global configuration, optimization options.
 haproxy_max_connections: 40000
 haproxy_processes: 1
