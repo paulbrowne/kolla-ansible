@@ -1,10 +1,10 @@
 ---
-- include_tasks: config.yml
+- import_tasks: config.yml
 
 - include_tasks: register.yml
   when: inventory_hostname in groups['monasca-api']
 
-- include_tasks: bootstrap_service.yml
+- import_tasks: bootstrap_service.yml
 
 - name: Flush handlers
   meta: flush_handlers
