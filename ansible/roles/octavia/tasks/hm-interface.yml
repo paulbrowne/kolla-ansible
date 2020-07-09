@@ -1,0 +1,61 @@
+---
+- name: Bond port to openvswitch br-int
+  vars:
+    port_ip: "{{ port_info.port.fixed_ips[0].ip_address }}"
+    port_mac: "{{ port_info.port.mac_address }}"
+    port_id: "{{ port_info.id }}"
+  become: True
+  command: >
+    docker exec openvswitch_vswitchd ovs-vsctl --may-exist \
+    add-port br-int {{ octavia_network_interface }} \
+    -- set Interface {{ octavia_network_interface }} type=internal \
+    -- set Interface {{ octavia_network_interface }} external-ids:iface-status=active \
+    -- set Interface {{ octavia_network_interface }} external-ids:attached-mac={{ port_mac }} \
+    -- set Interface {{ octavia_network_interface }} external-ids:iface-id={{ port_id }} \
+    -- set Interface {{ octavia_network_interface }} external-ids:skip_cleanup=true
+
+- name: Create octavia dhclient conf
+  become: true
+  copy:
+    content: |
+      request subnet-mask,broadcast-address,interface-mtu;
+      do-forward-updates false;
+    dest: /etc/dhcp/octavia-dhclient.conf
+    mode: 0774
+
+- name: Create octavia-interface service
+  become: True
+  template:
+    src: octavia-interface.service.j2
+    dest: /etc/systemd/system/octavia-interface.service
+  register: octavia_interface
+
+- name: reload octavia-interface.service if required
+  become: True
+  systemd:
+    name: octavia-interface
+    daemon_reload: yes
+  when: octavia_interface.changed
+
+- name: enable and start octavia-interface.service
+  become: True
+  service:
+    name: octavia-interface
+    enabled: yes
+    state: started
+
+- name: wait interface {{ octavia_network_interface }} ip appear
+  vars:
+    port_ip: "{{ port_info.port.fixed_ips[0].ip_address }}"
+  command: ip address show dev {{ octavia_network_interface }}
+  changed_when: false
+  register: ip_info
+  until: ip_info.stdout.find(port_ip) != -1
+  retries: 5
+  delay: 2
+
+# NOTE(wuchunyang): we have gathered facts at first, but here we add a new
+# network device(o-hm0) which is not collected, so we need gather facts again
+- name: Gather facts
+  setup:
+  when: octavia_interface.changed

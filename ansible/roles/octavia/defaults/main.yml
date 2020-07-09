@@ -154,3 +154,79 @@ octavia_git_repository: "{{ kolla_dev_repos_git }}/{{ project_name }}"
 octavia_dev_repos_pull: "{{ kolla_dev_repos_pull }}"
 octavia_dev_mode: "{{ kolla_dev_mode }}"
 octavia_source_version: "{{ kolla_source_version }}"
+
+#####################
+# integration Options
+#####################
+octavia_ssh_key_name: "octavia_ssh_key"
+octavia_amphora_listen_port: "9443"
+octavia_amp_image_tag: "amphora"
+octavia_network_type: "tenant"
+
+octavia_user_auth:
+  auth_url: "{{ keystone_admin_url }}"
+  username: "octavia"
+  password: "{{ octavia_keystone_password }}"
+  project_name: "{{ octavia_service_auth_project }}"
+  domain_name: "{{ default_project_domain_name }}"
+
+octavia_security_groups:
+  mgmt-sec-grp:
+    name: "lb-mgmt-sec-grp"
+    rules:
+      - protocol: icmp
+      - protocol: tcp
+        src_port: 22
+        dst_port: 22
+      - protocol: tcp
+        src_port: "{{ octavia_amphora_listen_port }}"
+        dst_port: "{{ octavia_amphora_listen_port }}"
+  health-mgr-sec-grp:
+    name: "lb-health-mgr-sec-grp"
+    rules:
+      - protocol: udp
+        src_port: "{{ octavia_health_manager_port }}"
+        dst_port: "{{ octavia_health_manager_port }}"
+
+# See os_nova_flavor for details. Supported parameters:
+# - disk
+# - ephemeral (optional)
+# - extra_specs (optional)
+# - flavorid (optional)
+# - is_public (optional)
+# - name
+# - ram
+# - swap (optional)
+# - vcpus
+octavia_amphora_flavor:
+  name: "amphora"
+  is_public: no
+  vcpus: 1
+  ram: 1024
+  disk: 5
+
+# See os_network and os_subnet for details. Supported parameters:
+# - external (optional)
+# - mtu (optional)
+# - name
+# - provider_network_type (optional)
+# - provider_physical_network (optional)
+# - provider_segmentation_id (optional)
+# - shared (optional)
+# - subnet
+# The subnet parameter has the following supported parameters:
+# - allocation_pool_start (optional)
+# - allocation_pool_start (optional)
+# - cidr
+# - enable_dhcp (optional)
+# - gateway_ip (optional)
+# - name
+# - no_gateway_ip (optional)
+octavia_network:
+  name: lb-mgmt-net
+  shared: false
+  subnet:
+    name: lb-mgmt-subnet
+    cidr: 10.0.0.0/24
+    no_gateway_ip: yes
+    enable_dhcp: yes

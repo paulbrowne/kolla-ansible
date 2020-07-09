@@ -108,7 +108,7 @@
 #swift_replication_interface: "{{ swift_storage_interface }}"
 #tunnel_interface: "{{ network_interface }}"
 #dns_interface: "{{ network_interface }}"
-#octavia_network_interface: "{{ api_interface }}"
+#octavia_network_interface: "o-hm0"
 
 # Configure the address family (AF) per network.
 # Valid options are [ ipv4, ipv6 ]
@@ -658,3 +658,53 @@
 # Configure telegraf to use the docker daemon itself as an input for
 # telemetry data.
 #telegraf_enable_docker_input: "no"
+
+##########################################
+# Octavia - openstack loadbalancer Options
+##########################################
+# NOTE: if you upgrade from 'Ussuri', you must set octavia_auto_configure to "no"
+# and configure octavia like before.
+#octavia_auto_configure: yes
+
+# octavia network type options are [ tenant, provider ]
+# tenant indicates that we will create a tenant network and get through the communication
+# between octavia-worker nodes and amphoras.
+# provider indicates that we will create a flat or vlan provider network. if use provider network,
+# you may need set octavia_network_interface to a proper network interface.
+#octavia_network_type: "tenant"
+
+#octavia_network:
+#  name: lb-mgmt-net
+#  provider_network_type:
+#  provider_physical_network:
+#  provider_segmentation_id:
+#  external:
+#  shared: false
+#  subnet:
+#    name: lb-mgmt-subnet
+#    cidr: 10.0.0.0/8
+#    no_gateway_ip: yes
+#    enable_dhcp: yes
+#    gateway_ip:
+#    allocation_pool_start:
+#    allocation_pool_end:
+
+# See os_nova_flavor for details. Supported parameters:
+# - flavorid (optional)
+# - is_public (optional)
+# - name
+# - vcpus
+# - ram
+# - disk
+# - ephemeral (optional)
+# - swap (optional)
+# - extra_specs (optional)
+#octavia_amphora_flavor:
+#  is_public: no
+#  name: "amphora"
+#  vcpus: 1
+#  ram: 1024
+#  disk: 5
+#octavia_amp_image_tag: "amphora"
+# Load balancer topology options are [ SINGLE, ACTIVE_STANDBY ]
+#octavia_loadbalancer_topology: "SINGLE"
