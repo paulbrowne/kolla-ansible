@@ -49,7 +49,9 @@
   run_once: True
   register: result
   failed_when: not result.stat.exists
-  when: inventory_hostname in groups['octavia-worker']
+  when:
+    - inventory_hostname in groups['octavia-worker']
+    - not octavia_certs_generate | bool
   with_items:
     - client.cert-and-key.pem
     - client_ca.cert.pem

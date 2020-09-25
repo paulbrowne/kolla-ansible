@@ -230,3 +230,9 @@ octavia_network:
     cidr: 10.0.0.0/24
     no_gateway_ip: yes
     enable_dhcp: yes
+
+#####################
+# Certificate options.
+#####################
+octavia_certs_generate: "yes"
+octavia_certs_work_dir: "/tmp/certs"

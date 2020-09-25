@@ -173,3 +173,37 @@
   when:
     - octavia_network_type == "tenant"
     - inventory_hostname in groups[octavia_services['octavia-health-manager']['group']]
+
+- block:
+    - name: Ensuring octavia custom config directory exist
+      file:
+        path: "{{ node_custom_config }}/octavia/"
+        state: "directory"
+        mode: "0770"
+      run_once: True
+      delegate_to: localhost
+
+    - name: Ensure octavia certificates exist
+      stat:
+        path: "{{ node_custom_config }}/octavia/{{ item }}"
+      loop:
+        - client_ca.cert.pem
+        - client.cert-and-key.pem
+        - server_ca.cert.pem
+        - server_ca.key.pem
+      register: cert_info
+      run_once: True
+      delegate_to: localhost
+
+    # 0 indicates that there is no cert in '/etc/kolla/config/octavia' directory
+    # 4 indicates that there are four certs in '/etc/kolla/config/octavia' directory
+    # if there is no certs in the directory, we create certs, otherwise, do not create
+    - name: generate octavia certificates
+      vars:
+        exists_cert_counts: "{{ cert_info.results | selectattr('stat.exists', 'equalto', true) | list | length }}"
+      import_tasks: generate_octavia_certs.yml
+      run_once: True
+      delegate_to: localhost
+      when:
+        - exists_cert_counts == '0'
+  when: octavia_certs_generate | bool

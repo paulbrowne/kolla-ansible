@@ -1,0 +1,134 @@
+---
+- name: create server_ca and client_ca directory
+  file:
+    path: "{{ octavia_certs_work_dir }}/{{ item }}"
+    state: "directory"
+    mode: 0770
+  loop:
+    - server_ca
+    - client_ca
+
+- name: touch index.txt for server_ca and client_ca
+  file:
+    path: "{{ octavia_certs_work_dir }}/{{ item }}/index.txt"
+    state: touch
+  changed_when: false
+  loop:
+    - server_ca
+    - client_ca
+
+- name: Check whether serial file exists
+  stat:
+    path: "{{ octavia_certs_work_dir }}/{{ item }}/serial"
+  loop:
+    - server_ca
+    - client_ca
+  register: serial_info
+
+- name: create serial files for server_ca and client_ca
+  copy:
+    content: 1000
+    dest: "{{ octavia_certs_work_dir }}/{{ item.item }}/serial"
+  loop: "{{ serial_info.results | selectattr('stat.exists', 'equalto', false) | list }}"
+
+- name: Generate an OpenSSL private key with the default values (4096 bits, RSA)
+  command: >
+    openssl genrsa -aes256 -out server_ca.key.pem \
+    -passout pass:{{ octavia_ca_password }} 4096
+  args:
+    chdir: "{{ octavia_certs_work_dir }}/server_ca"
+    creates: "{{ octavia_certs_work_dir }}/server_ca/server_ca.key.pem"
+
+# copy openssl.cnf which copied from octavia project
+- name: copy openssl.cnf
+  copy:
+    src: openssl.cnf
+    dest: "{{ octavia_certs_work_dir }}/openssl.cnf"
+
+- name: Create the server CA certificate.
+  command: >
+    openssl req -config ../openssl.cnf \
+    -key server_ca.key.pem \
+    -new -x509 -days 7300 -sha256 \
+    -extensions v3_ca -out ca.cert.pem \
+    -subj "/C=US/ST=Oregon/O=OpenStack/OU=Octavia/CN=example.org" \
+    -passin pass:{{ octavia_ca_password }}
+  args:
+    chdir: "{{ octavia_certs_work_dir }}/server_ca"
+    creates: "{{ octavia_certs_work_dir }}/server_ca/ca.cert.pem"
+
+- name: Create the client CA key
+  command: >
+    openssl genrsa -aes256 -out ca.key.pem \
+    -passout pass:{{ octavia_ca_password }} 4096
+  args:
+    chdir: "{{ octavia_certs_work_dir }}/client_ca"
+    creates: "{{ octavia_certs_work_dir }}/client_ca/ca.key.pem"
+
+- name: Create the client CA certificate
+  command: >
+    openssl req -config ../openssl.cnf \
+    -key ca.key.pem -new -x509 -days 7300 -sha256 -extensions v3_ca \
+    -out ca.cert.pem \
+    -subj "/C=US/ST=Oregon/O=OpenStack/OU=Octavia/CN=example.org" \
+    -passin pass:{{ octavia_ca_password }}
+  args:
+    chdir: "{{ octavia_certs_work_dir }}/client_ca"
+    creates: "{{ octavia_certs_work_dir }}/client_ca/ca.cert.pem"
+
+- name: Create a key for the client certificate
+  command: >
+    openssl genrsa -aes256 -out client.key.pem \
+    -passout pass:{{ octavia_ca_password }} 4096
+  args:
+    chdir: "{{ octavia_certs_work_dir }}/client_ca"
+    creates: "{{ octavia_certs_work_dir }}/client_ca/client.key.pem"
+
+- name: Create the certificate request for the client certificate
+  command: >
+    openssl req -config ../openssl.cnf \
+    -new -sha256 -key client.key.pem -out client.csr.pem \
+    -subj "/C=US/ST=Oregon/O=OpenStack/OU=Octavia/CN=example.org" \
+    -passin pass:{{ octavia_ca_password }}
+  args:
+    chdir: "{{ octavia_certs_work_dir }}/client_ca"
+    creates: "{{ octavia_certs_work_dir }}/client_ca/client.csr.pem"
+
+- name: Sign the client certificate request.
+  command: >
+    openssl ca -config ../openssl.cnf \
+    -extensions usr_cert -days 7300 -notext -md sha256 \
+    -in client.csr.pem \
+    -out client.cert.pem \
+    -keyfile ca.key.pem \
+    -key {{ octavia_ca_password }} \
+    -cert ca.cert.pem \
+    -outdir {{ octavia_certs_work_dir }}/client_ca -batch
+  args:
+    chdir: "{{ octavia_certs_work_dir }}/client_ca"
+    creates: "{{ octavia_certs_work_dir }}/client_ca/client.cert.pem"
+
+- name: convert encrypted client.key to unencrypted client.key
+  command: >
+    openssl rsa -in client.key.pem -out client.cert-and-key.pem \
+    -passin pass:{{ octavia_ca_password }}
+  args:
+    chdir: "{{ octavia_certs_work_dir }}/client_ca"
+    creates: "{{ octavia_certs_work_dir }}/client_ca/client.cert-and-key.pem"
+  register: client_info
+
+- name: Create a concatenated client certificate and key file.
+  blockinfile:
+    path: "{{ octavia_certs_work_dir }}/client_ca/client.cert-and-key.pem"
+    block: "{{ lookup('file',  octavia_certs_work_dir ~ '/client_ca/client.cert.pem') }}"
+  when: client_info.changed
+
+- name: copy the certs to {{ node_custom_config }}/octavia
+  copy:
+    src: "{{ octavia_certs_work_dir }}/{{ item.src }}"
+    dest: "{{ node_custom_config }}/octavia/{{ item.dest }}"
+  with_items:
+    - { src: "server_ca/ca.cert.pem", dest: "server_ca.cert.pem" }
+    - { src: "server_ca/server_ca.key.pem", dest: "server_ca.key.pem" }
+    - { src: "client_ca/ca.cert.pem", dest: "client_ca.cert.pem" }
+    - { src: "client_ca/client.cert-and-key.pem", dest: "client.cert-and-key.pem" }
