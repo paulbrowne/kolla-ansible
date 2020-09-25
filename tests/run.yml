@@ -188,24 +188,6 @@
               dest: ironic-agent.kernel
       when: scenario == "ironic"
 
-    - block:
-        - name: ensure octavia config directory exists
-          file:
-            path: /etc/kolla/config/octavia
-            state: directory
-            mode: 0777
-
-        - name: create dummy TLS certificates for octavia
-          file:
-            path: "/etc/kolla/config/octavia/{{ item }}"
-            state: touch
-          with_items:
-            - client.cert-and-key.pem
-            - client_ca.cert.pem
-            - server_ca.cert.pem
-            - server_ca.key.pem
-      when: scenario == 'magnum'
-
     - name: ensure /etc/ansible exists
       file:
         path: /etc/ansible
@@ -384,7 +366,7 @@
             EXT_NET_LOCAL_ADDR: "{{ neutron_external_network_prefix }}1/{{ neutron_external_network_prefix_length }}"
             EXT_NET_SLAVE_DEVICE: "{{ neutron_external_interface_name }}"
             SCENARIO: "{{ scenario }}"
-          when: openstack_core_tested or scenario in ['ironic', 'scenario_nfv', 'zun']
+          when: openstack_core_tested or scenario in ['ironic', 'magnum', 'scenario_nfv', 'zun']
 
         - name: Run test-core-openstack.sh script
           script:
